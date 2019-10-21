@@ -1,0 +1,57 @@
+# This is a RNA-Seq analysis workflow for paired-end sequening data
+# It contains:
+    # Reads alignment back to genome: HISAT2
+    # Counts reads: featureCounts
+
+# Author: PJ Wu
+# Date: 2019-10-21
+
+
+GENOME_GTF = "annotation/Mus_musculus.GRCm38.96.gtf"
+HISAT2_INDEX_PREFIX = "genome_index/grcm38/genome"
+
+with open("sample_list.txt") as f:
+    SAMPLES = f.read().split()
+# SAMPLES = ["SRR9048143", "SRR9048144"]
+
+
+
+rule all:
+    input:
+        "counts/counts.txt"
+
+
+
+rule align_hisat:
+    input:
+        fq1="datasets/{sample}_1.fastq",
+        fq2="datasets/{sample}_2.fastq"
+    output:
+        "mapped_reads/{sample}_sorted.bam"
+    log:
+        "mapped_reads/{sample}.log"
+    message:
+        "Start alignment..."
+    threads: 8
+    shell:
+        "hisat2 --dta -t -p {threads} -x {HISAT2_INDEX_PREFIX} -1 {input.fq1} -2 {input.fq2} 2>{log} | samtools sort -@ {threads} -o {output}"
+
+
+
+rule featureCounts:
+    input:
+        genome_gtf=GENOME_GTF,
+        bam=expand("mapped_reads/{sample}_sorted.bam", sample=SAMPLES)
+    output:
+        "counts/counts.txt"
+    threads: 8
+    shell:
+        "featureCounts \
+                -p \
+                -T {threads} \
+                -t exon \
+                -g gene_id \
+                -a {input.genome_gtf} \
+                -o {output} \
+                {input.bam}"
+

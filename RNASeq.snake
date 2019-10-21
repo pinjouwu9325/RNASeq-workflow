@@ -1,0 +1,124 @@
+#  This is a RNA-Seq analysis pipeline
+    # It contains:
+        # Reads alignment back to genome: HISAT2
+        # Transcripts assembly: StringTie
+        # Gene counts process for DESeq2: prepDE.py
+
+# Author: PJ Wu
+# Date: 2019-10-21
+
+GENOME_GTF="annotation/Mus_musculus.GRCm38.96.gtf"
+HISAT2_INDEX_PREFIX = "genome_index/grcm38/genome"
+
+with open("sample_list.txt") as f:
+    SAMPLES = f.read().split()
+# SAMPLES = ["SRR9048143", "SRR9048144"]
+
+
+from os.path import join
+from pathlib import Path
+
+
+
+rule all:
+    input:
+        "deseq2/gene_count_matrix.csv",
+        "deseq2/transcript_count_matrix.csv"
+        # expand("stringtie/quant/{sample}/{sample}.gtf", sample=SAMPLES)
+
+
+
+rule align_hisat:
+    input:
+        fq1="datasets/{sample}_1.fastq",
+        fq2="datasets/{sample}_2.fastq"
+        # hisat2_index=expand("/NAS_lab/pinjouwu9325/intern/genome_index/chr19/chr19.{i}.ht2", i=range(1,9))
+    output:
+        "mapped_reads/{sample}.bam"
+    log: 
+        "mapped_reads/{sample}.log"
+    message:
+        "Start alingment..."
+    threads: 8 
+    shell:
+        "hisat2 --dta -t -p {threads} -x {HISAT2_INDEX_PREFIX} -1 {input.fq1} -2 {input.fq2} 2>{log} | samtools sort -@ {threads} -o {output}"
+
+
+
+rule stringtie_assemble:
+    input:
+        genome_gtf=GENOME_GTF,
+        bam="mapped_reads/{sample}.bam"
+    output:
+        "stringtie/assemble/{sample}.gtf"
+    message:
+        "Start assembly..."
+    threads: 8
+    shell:
+        "stringtie -p {threads} -G {input.genome_gtf} -l {wildcards.sample} -o {output} {input.bam}"
+
+
+
+rule stringtie_merge_list:
+    input:
+        expand("stringtie/assemble/{sample}.gtf", sample=SAMPLES)
+    output:
+        "stringtie/merged_list.txt"
+    run:
+        with open(output[0], "w") as f:
+            for i in input:
+                print(Path(i).resolve(), file=f)
+
+
+
+rule stringtie_merge:
+    input:
+        genome_gtf=GENOME_GTF,
+        merged_list = "stringtie/merged_list.txt",
+        # sample_gtfs = expand("stringtie/assembled/{sample}.gtf", sample=SAMPLES)
+    output:
+        "stringtie/merged.gtf"
+    threads: 8
+    shell:
+        "stringtie --merge -p {threads} -G {input.genome_gtf} -o {output} {input.merged_list}"
+
+
+
+rule stringtie_quant:
+    input:
+        merged_gtf="stringtie/merged.gtf",
+        bam="mapped_reads/{sample}.bam"
+    output:
+        gtf="stringtie/quant/{sample}/{sample}.gtf"
+    threads: 8
+    shell:
+        "stringtie -e -B -G {input.merged_gtf} -o {output.gtf} {input.bam}"
+
+
+
+rule create_sample_list:
+    input:
+        expand("stringtie/quant/{sample}/{sample}.gtf", sample=SAMPLES)
+    output:
+        "deseq2/sample_list.txt"
+    run:
+        with open(output[0], "w") as f:
+            for i in input:
+                name =Path(i).name
+                print(name +" " + str(Path(i).resolve()), file=f)
+
+
+
+rule prepDE:
+    input:
+        "deseq2/sample_list.txt"
+    output:
+        gene_count="deseq2/gene_count_matrix.csv",
+        transcript_count="deseq2/transcript_count_matrix.csv"
+    conda:
+        "envs/py27.yml"
+    shell:
+        "python prepDE.py -i {input} -g {output.gene_count} -t {output.transcript_count}"
+
+
+
