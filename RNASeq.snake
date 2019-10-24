@@ -7,7 +7,7 @@
 # Author: PJ Wu
 # Date: 2019-10-21
 
-GENOME_GTF="annotation/Mus_musculus.GRCm38.96.gtf"
+GENOME_GTF="Mus_musculus.GRCm38.96.gtf"
 HISAT2_INDEX_PREFIX = "genome_index/grcm38/genome"
 
 with open("sample_list.txt") as f:
