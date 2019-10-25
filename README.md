@@ -24,6 +24,7 @@
     
   All you need:   
            
+  * Create an environment with RNASeq.yml and activate it, or use your own pacakges 
   * A sample_list.txt containing all the sample (e.g. SRR9048143)
   * An annotation file (e.g. Mus_musculus.GRCm38.96.gtf)
   * Genome index for [HISAT2](https://ccb.jhu.edu/software/hisat2/index.shtml)
@@ -50,6 +51,7 @@
   * Process of read counts: featureCounts
     
   Environments and dependencies:
+  
   * subread	(v2.0.0)
   * RNASeq.yml
     * snakemake (v5.7.4)
@@ -57,9 +59,10 @@
  
   All you need:
     	
+  * Create an environement with RNASeq.yml and activate it, or use your own packages
   * A sample_list.txt containing all the sample (e.g. SRR9048143)
-  * An annotation file (e.g. Mus_musculus.GRCm38.96.gtf
-  * Genome index for HISAT2
+  * An annotation file (e.g. Mus_musculus.GRCm38.96.gtf)
+  * Genome index for [HISAT2](https://ccb.jhu.edu/software/hisat2/index.shtml)
   * Create a directory datasets caontianing all the fastq file
   * Edit RNASeq.sanke:
     * Assign GENOME_GTF = "PATH_TO_YOUR_ANNOTATION_FILE"
