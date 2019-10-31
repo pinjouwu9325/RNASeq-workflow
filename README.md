@@ -25,7 +25,7 @@
   All you need:   
            
   * Create an environment with RNASeq.yml and activate it, or use your own pacakges 
-  * A sample_list.txt containing all the sample (e.g. SRR9048143)
+  * A sample_list.txt containing all the sample names separated by comma (e.g. SRR9048143,SRR9048144)
   * An annotation file (e.g. Mus_musculus.GRCm38.96.gtf)
   * Genome index for [HISAT2](https://ccb.jhu.edu/software/hisat2/index.shtml)
   * Create a directory datasets caontianing all the fastq file    
@@ -60,7 +60,7 @@
   All you need:
     	
   * Create an environement with RNASeq.yml and activate it, or use your own packages
-  * A sample_list.txt containing all the sample (e.g. SRR9048143)
+  * A sample_list.txt containing all the sample names separated by comma (e.g. SRR9048143,SRR9048144)
   * An annotation file (e.g. Mus_musculus.GRCm38.96.gtf)
   * Genome index for [HISAT2](https://ccb.jhu.edu/software/hisat2/index.shtml)
   * Create a directory datasets caontianing all the fastq file
