@@ -11,8 +11,8 @@ GENOME_GTF="Mus_musculus.GRCm38.96.gtf"
 HISAT2_INDEX_PREFIX = "genome_index/grcm38/genome"
 
 with open("sample_list.txt") as f:
-    SAMPLES = f.read().split(",")
-# SAMPLES = ["SRR9048143", "SRR9048144"]
+    SAMPLES = f.read().strip("\n ").split(",")
+# SAMPLES = ["SRR9048143","SRR9048144"]
 
 
 from os.path import join
