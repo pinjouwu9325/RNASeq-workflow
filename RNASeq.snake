@@ -34,7 +34,7 @@ rule align_hisat:
         fq2="datasets/{sample}_2.fastq"
         # hisat2_index=expand("/NAS_lab/pinjouwu9325/intern/genome_index/chr19/chr19.{i}.ht2", i=range(1,9))
     output:
-        "mapped_reads/{sample}.bam"
+        "mapped_reads/{sample}_sorted.bam"
     log: 
         "mapped_reads/{sample}.log"
     message:
@@ -48,7 +48,7 @@ rule align_hisat:
 rule stringtie_assemble:
     input:
         genome_gtf=GENOME_GTF,
-        bam="mapped_reads/{sample}.bam"
+        bam="mapped_reads/{sample}_sorted.bam"
     output:
         "stringtie/assemble/{sample}.gtf"
     message:
@@ -87,7 +87,7 @@ rule stringtie_merge:
 rule stringtie_quant:
     input:
         merged_gtf="stringtie/merged.gtf",
-        bam="mapped_reads/{sample}.bam"
+        bam="mapped_reads/{sample}_sorted.bam"
     output:
         gtf="stringtie/quant/{sample}/{sample}.gtf"
     threads: 8
@@ -119,6 +119,4 @@ rule prepDE:
         "envs/py27.yml"
     shell:
         "python prepDE.py -i {input} -g {output.gene_count} -t {output.transcript_count}"
-
-
 

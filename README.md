@@ -2,7 +2,7 @@
 
 ### RNASeq.snake 
  
- Last update: 2019-10-24
+ Last update: 2020-03-02
     
  This is a RNA-Seq analysis workflow including transcripts assembly for paired-end sequencing data.
     
@@ -18,7 +18,7 @@
     * snakemake (v5.7.4)
     * HISAT2    (v2.1.0)
     * samtools  (v1.9)
-    * StringTie (v2.0)
+    * StringTie (v2.1.1)
   * py27.yml
     * python    (v2.7.15)
     
@@ -28,8 +28,8 @@
   * A sample_list.txt containing all the sample names separated by comma (e.g. SRR9048143,SRR9048144)
   * An annotation file (e.g. Mus_musculus.GRCm38.96.gtf)
   * Genome index for [HISAT2](https://ccb.jhu.edu/software/hisat2/index.shtml)
-  * Create a directory datasets caontianing all the fastq file    
-  * [prepDE.py](https://ccb.jhu.edu/software/stringtie/dl/prepDE.py) file
+  * Put the paired fastq files of each sample into `datasets`   
+  * [prepDE.py](https://ccb.jhu.edu/software/stringtie/dl/prepDE.py) file for generating counts matirx
   * Edit RNASeq.sanke:
     * Assign GENOME_GTF = "PATH_TO_YOUR_ANNOTATION_FILE"
     * Assign HISAT2_INDEX_PREFIX = "PATH_TO_GENOME_INDEX(contain index prefix)"
@@ -63,7 +63,7 @@
   * A sample_list.txt containing all the sample names separated by comma (e.g. SRR9048143,SRR9048144)
   * An annotation file (e.g. Mus_musculus.GRCm38.96.gtf)
   * Genome index for [HISAT2](https://ccb.jhu.edu/software/hisat2/index.shtml)
-  * Create a directory datasets caontianing all the fastq file
+  * Put the paired fastq files of each sample into `datasets` 
   * Edit RNASeq.sanke:
     * Assign GENOME_GTF = "PATH_TO_YOUR_ANNOTATION_FILE"
     * Assign HISAT2_INDEX_PREFIX = "PATH_TO_GENOME_INDEX(contain index prefix)"
