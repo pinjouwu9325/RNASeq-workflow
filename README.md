@@ -2,7 +2,7 @@
 
 ### RNASeq.snake 
  
- Last update: 2020-03-02
+ Last update: 2020-04-24
     
  This is a RNA-Seq analysis workflow including transcripts assembly for paired-end sequencing data.
     
@@ -16,7 +16,7 @@
     
   * RNASeq.yml
     * snakemake (v5.7.4)
-    * HISAT2    (v2.1.0)
+    * HISAT2    (v2.2.0)
     * samtools  (v1.9)
     * StringTie (v2.1.1)
   * py27.yml
@@ -37,11 +37,11 @@
   Usage: 
   `snakemake --use-conda -p -j {threads} -s RNASeq.snake`
 
-
+  * Threads is limited up to 16
 
 ### RNASeq_Counts.snake
     
-  Last update: 2019-10-24
+  Last update: 2020-04-24
     
   This is a RNA-Seq analysis workflow for read counting for paired-end sequencing data.
     
@@ -70,3 +70,5 @@
 
   Usage:
   `snakemake -p -j {threads} -s RNASeq_Counts.snake`
+
+  * Threads is limited up to 16

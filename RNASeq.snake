@@ -39,9 +39,9 @@ rule align_hisat:
         "mapped_reads/{sample}.log"
     message:
         "Start alingment..."
-    threads: 8 
+    threads: 16 
     shell:
-        "hisat2 --dta -t -p {threads} -x {HISAT2_INDEX_PREFIX} -1 {input.fq1} -2 {input.fq2} 2>{log} | samtools sort -@ {threads} -o {output}"
+        "hisat2 --dta -t -p {threads} -x {HISAT2_INDEX_PREFIX} -1 {input.fq1} -2 {input.fq2} 2>{log} --new-summary | samtools sort -@ {threads} -o {output}"
 
 
 
@@ -53,7 +53,7 @@ rule stringtie_assemble:
         "stringtie/assemble/{sample}.gtf"
     message:
         "Start assembly..."
-    threads: 8
+    threads: 16
     shell:
         "stringtie -p {threads} -G {input.genome_gtf} -l {wildcards.sample} -o {output} {input.bam}"
 
@@ -78,7 +78,7 @@ rule stringtie_merge:
         # sample_gtfs = expand("stringtie/assembled/{sample}.gtf", sample=SAMPLES)
     output:
         "stringtie/merged.gtf"
-    threads: 8
+    threads: 16
     shell:
         "stringtie --merge -p {threads} -G {input.genome_gtf} -o {output} {input.merged_list}"
 
@@ -90,7 +90,7 @@ rule stringtie_quant:
         bam="mapped_reads/{sample}_sorted.bam"
     output:
         gtf="stringtie/quant/{sample}/{sample}.gtf"
-    threads: 8
+    threads: 16
     shell:
         "stringtie -e -B -G {input.merged_gtf} -o {output.gtf} {input.bam}"
 

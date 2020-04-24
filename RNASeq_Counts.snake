@@ -32,9 +32,9 @@ rule align_hisat:
         "mapped_reads/{sample}.log"
     message:
         "Start alignment..."
-    threads: 8
+    threads: 16
     shell:
-        "hisat2 --dta -t -p {threads} -x {HISAT2_INDEX_PREFIX} -1 {input.fq1} -2 {input.fq2} 2>{log} | samtools sort -@ {threads} -o {output}"
+        "hisat2 --dta -t -p {threads} -x {HISAT2_INDEX_PREFIX} -1 {input.fq1} -2 {input.fq2} 2>{log} --new-summary | samtools sort -@ {threads} -o {output}"
 
 
 
@@ -44,7 +44,7 @@ rule featureCounts:
         bam=expand("mapped_reads/{sample}_sorted.bam", sample=SAMPLES)
     output:
         "counts/counts.txt"
-    threads: 8
+    threads: 16
     shell:
         "featureCounts \
                 -p \
