@@ -1,8 +1,14 @@
 # Workflows for RNA-Seq analysis
 
+## There are: 
+  * RNASeq.sanke
+  * RNASeq_Counts.snake
+  * counts_to_tpm.R
+
+
 ### RNASeq.snake 
  
- Last update: 2020-04-24
+ Last update: 2020-06-18
     
  This is a RNA-Seq analysis workflow including transcripts assembly for paired-end sequencing data.
     
@@ -72,3 +78,16 @@
   `snakemake -p -j {threads} -s RNASeq_Counts.snake`
 
   * Threads is limited up to 16
+
+
+### counts_to_tpm.R
+
+  Last update: 2020-06-18
+
+  This is a command line executable script for counts to RPKM/FPKM and TPM transformation.
+
+  Usage:
+  `Rscript counts_to_tpm.R {input} {output}`
+  
+  * input: it takes the output count matirx of featureCounts. e.g. counts.txt from the pipeline
+  * output: set for output filename. Default: GeneExpression.txt.
