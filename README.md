@@ -82,12 +82,13 @@
 
 ### counts_to_tpm.R
 
-  Last update: 2020-06-18
+  Last update: 2020-08-31
 
-  This is a command line executable script for counts to RPKM/FPKM and TPM transformation.
+  This is a command line executable script for counts to RPKM/FPKM and TPM transformation and annotations using ENSEMBL datasets.
 
   Usage:
-  `Rscript counts_to_tpm.R {input} {output}`
+  `Rscript counts_to_tpm.R {input} {species} {output}`
   
   * input: it takes the output count matirx of featureCounts. e.g. counts.txt from the pipeline
-  * output: set for output filename. Default: GeneExpression.txt.
+  * species: it supports human and mouse. Default: human 
+  * output: set for output filename. Default: GeneExpression.txt

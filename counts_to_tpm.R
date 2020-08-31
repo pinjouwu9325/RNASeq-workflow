@@ -1,8 +1,9 @@
 #!/usr/bin/env Rscript
 
 # A script for RPKM, FPKM and TPM transformation from read counts (featureCounts)
+# Annotations using ensembl datasets
 # Author: PJ Wu
-# Date: 2020-06-18
+# Date: 2020-08-31
 
 args = commandArgs(trailingOnly=TRUE)
 # If TRUE, only arguments after --args are returned
@@ -11,9 +12,18 @@ args = commandArgs(trailingOnly=TRUE)
 # if not, return error
 if (length(args)==0){
     stop("At least one argument must be supplied", call.=FALSE)
-}else if (length(args)==1){
-    # set default output
-    args[2] = "GeneExprssion.txt"
+}else if (length(args)>=1){
+    # set annotation species and output file name
+    if (args[2] == "human"){
+        ens_dataset = "hsapiens_gene_ensembl"
+    }else if (args[2] == "mouse"){
+        ens_dataset = "mmusculus_gene_ensembl"
+    }else{
+        ens_dataset = "hsapiens_gene_ensembl" 
+    }
+    print(paste("Annotation specie is set to: ", ens_dataset))
+    args[3] = "GeneExprssion.txt"
+    print(paste("Output filename: ", args[3]))
 }
 
 # Main programme
@@ -50,10 +60,10 @@ for (i in samples_new){
 
 # Add additional gene anotations
 library("biomaRt")
-ensembl = useMart("ensembl", dataset = "hsapiens_gene_ensembl")
+ensembl = useMart("ensembl", dataset = ens_dataset)
 anno = getBM(attributes = c("ensembl_gene_id", "external_gene_name", "gene_biotype"), mart = ensembl)
 df_sub_anno = left_join(df_sub, anno, by = c("Geneid" = "ensembl_gene_id"), keep = FALSE) %>%
     rename("Gene_symbol" = "external_gene_name", "Gene_biotype" = "gene_biotype") %>%
     dplyr::select(c("Geneid", "Gene_symbol", "Gene_biotype", everything()))
 
-write.table(df_sub_anno, file = args[2], sep= "\t", row.names = FALSE, fileEncoding = "utf-8")
+write.table(df_sub_anno, file = args[3], sep= "\t", row.names = FALSE, fileEncoding = "utf-8")
