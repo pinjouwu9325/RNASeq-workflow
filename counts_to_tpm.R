@@ -22,7 +22,9 @@ if (length(args)==0){
         ens_dataset = "hsapiens_gene_ensembl" 
     }
     print(paste("Annotation specie is set to: ", ens_dataset))
-    args[3] = "GeneExprssion.txt"
+    if (args[3]==0){
+        agrs[3] = "GeneExpression.txt"
+    }
     print(paste("Output filename: ", args[3]))
 }
 
@@ -45,7 +47,7 @@ tpm = function(counts, lengths){
 
 df = read.table(args[1], sep = "\t", header = TRUE)
 samples = colnames(df)[-c(1:6)]
-samples_new = str_replace_all(samples, c("mapped_reads."="", "_sorted.bam" = ".counts"))
+samples_new = str_replace_all(samples, c("mapped_reads."="", ".bam" = ".counts"))
 df_re = rename_at(df, vars(samples), ~samples_new)
 df_sub = select(df_re, -c(2:5))
 
@@ -59,11 +61,15 @@ for (i in samples_new){
 }   
 
 # Add additional gene anotations
+# Remove the version number from the Ensembl Ids before using binmaRt
 library("biomaRt")
 ensembl = useMart("ensembl", dataset = ens_dataset)
-anno = getBM(attributes = c("ensembl_gene_id", "external_gene_name", "gene_biotype"), mart = ensembl)
+anno = getBM(attributes = c("ensembl_gene_id", "external_gene_name", "gene_biotype"), "ensembl_gene_id", gsub("\\.[0-9]+$","", df_sub$Geneid), mart = ensembl)
+df_sub = df_sub %>%
+    mutate(Geneid = gsub("\\.[0-9]+$","", Geneid))
 df_sub_anno = left_join(df_sub, anno, by = c("Geneid" = "ensembl_gene_id"), keep = FALSE) %>%
     rename("Gene_symbol" = "external_gene_name", "Gene_biotype" = "gene_biotype") %>%
     dplyr::select(c("Geneid", "Gene_symbol", "Gene_biotype", everything()))
 
 write.table(df_sub_anno, file = args[3], sep= "\t", row.names = FALSE, fileEncoding = "utf-8")
+print("counts_to_tpm.R finished successfully")
